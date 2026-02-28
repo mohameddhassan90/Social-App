@@ -97,9 +97,10 @@ export default function Feed() {
           <aside className="hidden h-fit space-y-3 xl:sticky xl:top-21 xl:block">
             <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
               <button
-                className="mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"
+                className={whatIs==="Feed"?"flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition bg-[#e7f3ff] text-[#1877f2]":"mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"}
                 onClick={btnFeed}
               >
+                
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width={17}
@@ -121,7 +122,7 @@ export default function Feed() {
                 Feed
               </button>
               <button
-                className="mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"
+                className={whatIs==="Mypost"?"flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition bg-[#e7f3ff] text-[#1877f2]":"mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"}
                 onClick={btnMypost}
               >
                 <svg
@@ -145,7 +146,7 @@ export default function Feed() {
                 My Posts
               </button>
               <button
-                className="mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"
+                className={whatIs==="Community"?"flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition bg-[#e7f3ff] text-[#1877f2]":"mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"}
                 onClick={btnCommunity}
               >
                 <svg
@@ -169,7 +170,7 @@ export default function Feed() {
                 Community
               </button>
               <button
-                className="mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"
+                className={whatIs==="Save"?"flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition bg-[#e7f3ff] text-[#1877f2]":"mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"}
                 onClick={btnSave}
               >
                 <svg
