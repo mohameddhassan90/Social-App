@@ -27,11 +27,7 @@ export default function Notifictions() {
   } = useMutation({
     mutationFn: markAll,
     onSuccess: () => {
-        query.invalidateQueries({ queryKey: ["feed"] });
-        query.invalidateQueries({ queryKey: ["community"] });
-        query.invalidateQueries({ queryKey: [`userPosts`] });
         query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["suggested"] });
         query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
   });

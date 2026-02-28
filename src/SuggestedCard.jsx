@@ -1,6 +1,33 @@
-import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import React, { useContext } from "react";
+import { toast } from "react-toastify";
+import { authContext } from "./Context/AuthContext";
 
 export default function SuggestedCard({ suggest }) {
+  console.log(suggest);
+  const{getUserData}=useContext(authContext)
+  const query = useQueryClient();
+  const { data, mutate, isPending } = useMutation({
+    mutationFn: followUser,
+    onSuccess: (data) => {
+      toast.success(data.data.message);
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      getUserData(localStorage.getItem(`token`));
+    },
+  });
+
+  function followUser() {
+    return axios.put(
+      `https://route-posts.routemisr.com/users/${suggest?._id}/follow`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(`token`)}`,
+        },
+      },
+    );
+  }
   return (
     <div>
       <div className="cursor-pointer rounded-xl border border-slate-200 p-2.5">
@@ -25,27 +52,33 @@ export default function SuggestedCard({ suggest }) {
           </button>
           <button
             className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:opacity-60 bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff]"
-            fdprocessedid="cql8jd"
+            onClick={mutate}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={13}
-              height={13}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-user-plus"
-              aria-hidden="true"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx={9} cy={7} r={4} />
-              <line x1={19} x2={19} y1={8} y2={14} />
-              <line x1={22} x2={16} y1={11} y2={11} />
-            </svg>
-            Follow
+            {isPending ? (
+              <i className="fa-solid fa-spin fa-spinner text-black"></i>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={13}
+                  height={13}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-user-plus"
+                  aria-hidden="true"
+                >
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx={9} cy={7} r={4} />
+                  <line x1={19} x2={19} y1={8} y2={14} />
+                  <line x1={22} x2={16} y1={11} y2={11} />
+                </svg>
+                Follow
+              </>
+            )}
           </button>
         </div>
         <div className="mt-2 flex items-center gap-2 text-[11px] font-semibold text-slate-500">

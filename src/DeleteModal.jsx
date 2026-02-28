@@ -27,11 +27,7 @@ export default function DeleteModal({ post }) {
       query.invalidateQueries({ queryKey: ["feed"] });
         query.invalidateQueries({ queryKey: ["community"] });
         query.invalidateQueries({ queryKey: [`userPosts`] });
-        query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["comment", post?._id] });
         query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
-        query.invalidateQueries({ queryKey: ["suggested"] });
-        query.invalidateQueries({ queryKey: ["countNotifictions"] });
       onClose()
     },
   });

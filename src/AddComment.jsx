@@ -20,14 +20,7 @@ export default function AddComment({ postId }) {
     mutationFn: addComment,
     onSuccess: (data) => {
       toast.success(data?.data?.data?.message);
-      query.invalidateQueries({ queryKey: ["feed"] });
-        query.invalidateQueries({ queryKey: ["community"] });
-        query.invalidateQueries({ queryKey: [`userPosts`] });
-        query.invalidateQueries({ queryKey: [`notifictions`] });
         query.invalidateQueries({ queryKey: ["comment", postId] });
-        query.invalidateQueries({ queryKey: ["singlepost", postId] });
-        query.invalidateQueries({ queryKey: ["suggested"] });
-        query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);

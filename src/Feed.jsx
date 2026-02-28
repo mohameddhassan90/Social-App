@@ -93,9 +93,9 @@ export default function Feed() {
   return (
     <div className="mx-auto max-w-7xl px-3 py-3.5">
       <main className="min-w-0">
-        <div className="grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)_300px]">
-          <aside className="hidden h-fit space-y-3 xl:sticky xl:top-21 xl:block">
-            <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[240px_minmax(0,1fr)_300px]">
+          <aside className="h-fit space-y-3 xl:sticky xl:top-21 xl:block">
+            <div className="grid grid-cols-2 xl:grid-cols-1 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
               <button
                 className={whatIs==="Feed"?"flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition bg-[#e7f3ff] text-[#1877f2]":"mt-1 cursor-pointer flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-bold transition text-slate-700 hover:bg-slate-100"}
                 onClick={btnFeed}
@@ -193,24 +193,24 @@ export default function Feed() {
             </div>
           </aside>
 
-          <section className="space-y-4">
+          <section className="space-y-4 order-2 xl:order-0">
             <CreatePost></CreatePost>
             {whatIs === `Feed` && (
-              <div className="grid grid-col-1 gap-5 my-3">
+              <div className="grid grid-cols-1 gap-5 my-3">
                 {dataFeed?.data?.data?.posts?.map((post) => (
                   <PostCard key={post._id} post={post} isHome></PostCard>
                 ))}
               </div>
             )}
             {whatIs === `Community` && (
-              <div className="grid grid-col-1 gap-5 my-3">
+              <div className="grid grid-cols-1 gap-5 my-3">
                 {dataCommunity?.data?.data?.posts?.map((post) => (
                   <PostCard key={post._id} post={post} isHome></PostCard>
                 ))}
               </div>
             )}
             {whatIs === `Mypost` && (
-              <div className="grid grid-col-1 gap-5 my-3">
+              <div className="grid grid-cols-1 gap-5 my-3">
                 {dataMypost?.data?.data?.posts?.map((post) => (
                   <PostCard key={post._id} post={post} isHome></PostCard>
                 ))}

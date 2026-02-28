@@ -79,11 +79,7 @@ export default function UpdateModal({ postId, post, setOpen }) {
       query.invalidateQueries({ queryKey: ["feed"] });
         query.invalidateQueries({ queryKey: ["community"] });
         query.invalidateQueries({ queryKey: [`userPosts`] });
-        query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["comment", postId] });
         query.invalidateQueries({ queryKey: ["singlepost", postId] });
-        query.invalidateQueries({ queryKey: ["suggested"] });
-        query.invalidateQueries({ queryKey: ["countNotifictions"] });
       onClose();
       setOpen(false);
     },

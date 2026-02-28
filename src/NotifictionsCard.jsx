@@ -11,13 +11,7 @@ export default function NotifictionsCard({ notifiction }) {
   const { data, mutate, isPending, isSuccess } = useMutation({
     mutationFn: markAsRead,
     onSuccess: () => {
-      query.invalidateQueries({ queryKey: ["feed"] });
-        query.invalidateQueries({ queryKey: ["community"] });
-        query.invalidateQueries({ queryKey: [`userPosts`] });
         query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["comment", notifiction?.entity?._id] });
-        query.invalidateQueries({ queryKey: ["singlepost", notifiction?.entity?._id] });
-        query.invalidateQueries({ queryKey: ["suggested"] });
         query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
   });
@@ -64,13 +58,13 @@ export default function NotifictionsCard({ notifiction }) {
           </button>
           <span className="absolute -bottom-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white ring-2 ring-white text-[#1877f2]">
             {notifiction?.type === "like_post" && (
-              <i class="fa-regular fa-heart text-red-500"></i>
+              <i className="fa-regular fa-heart text-red-500"></i>
             )}
             {notifiction?.type === "comment_post" && (
-              <i class="fa-regular fa-comment text-blue-500"></i>
+              <i className="fa-regular fa-comment text-blue-500"></i>
             )}
             {notifiction?.type === "share_post" && (
-              <i class="fa-solid fa-share text-green-500"></i>
+              <i className="fa-solid fa-share text-green-500"></i>
             )}
           </span>
         </div>

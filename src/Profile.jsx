@@ -5,8 +5,6 @@ import axios from "axios";
 import PostCard from "./PostCard";
 import Loading from "./Loading";
 import { changeDate } from "./utilties/FormatDate";
-import { object } from "zod";
-import { da } from "zod/v4/locales";
 import { toast } from "react-toastify";
 
 export default function Profile() {
@@ -36,10 +34,7 @@ export default function Profile() {
       query.invalidateQueries({ queryKey: ["feed"] });
         query.invalidateQueries({ queryKey: ["community"] });
         query.invalidateQueries({ queryKey: [`userPosts`] });
-        query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["suggested"] });
-        query.invalidateQueries({ queryKey: ["countNotifictions"] });
-      getUserData(localStorage.getItem(`token`));
+        getUserData(localStorage.getItem(`token`));
     },
     onSettled: () => {
       setOpen(false);
@@ -275,11 +270,11 @@ export default function Profile() {
                           {userData?.email}
                         </p>
                         <p className="flex items-center gap-2">
-                          <i class="fa-solid fa-cake-candles"></i>
+                          <i className="fa-solid fa-cake-candles"></i>
                           {changeDate(userData.dateOfBirth)}
                         </p>
                         <p className="flex items-center gap-2">
-                          <i class="fa-solid fa-user"></i>
+                          <i className="fa-solid fa-user"></i>
                           {userData?.gender}
                         </p>
                         <p className="flex items-center gap-2">

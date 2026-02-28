@@ -26,7 +26,7 @@ export default function Navbar() {
   
 
   function logOut() {
-    setLogin(null);
+    setLogin(false);
     localStorage.removeItem("token");
     navigate("login");
   }

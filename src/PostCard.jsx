@@ -48,11 +48,7 @@ export default function PostCard({ post, isHome }) {
       query.invalidateQueries({ queryKey: ["feed"] });
       query.invalidateQueries({ queryKey: ["community"] });
       query.invalidateQueries({ queryKey: [`userPosts`] });
-      query.invalidateQueries({ queryKey: [`notifictions`] });
-      query.invalidateQueries({ queryKey: ["comment", post?._id] });
       query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
-      query.invalidateQueries({ queryKey: ["suggested"] });
-      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
   });
 
@@ -85,11 +81,7 @@ export default function PostCard({ post, isHome }) {
       query.invalidateQueries({ queryKey: ["feed"] });
       query.invalidateQueries({ queryKey: ["community"] });
       query.invalidateQueries({ queryKey: [`userPosts`] });
-      query.invalidateQueries({ queryKey: [`notifictions`] });
-      query.invalidateQueries({ queryKey: ["comment", post?._id] });
       query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
-      query.invalidateQueries({ queryKey: ["suggested"] });
-      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);
@@ -264,15 +256,15 @@ export default function PostCard({ post, isHome }) {
             </div>
             <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm text-slate-600">
               <span>
-                <i class="fa-regular fa-thumbs-up"></i>{" "}
+                <i className="fa-regular fa-thumbs-up"></i>{" "}
                 {post?.sharedPost?.likesCount}
               </span>
               <span>
-                <i class="fa-regular fa-comment"></i>{" "}
+                <i className="fa-regular fa-comment"></i>{" "}
                 {post?.sharedPost?.commentsCount}
               </span>
               <span>
-                <i class="fa-solid fa-share-nodes"></i>{" "}
+                <i className="fa-solid fa-share-nodes"></i>{" "}
                 {post?.sharedPost?.sharesCount}
               </span>
             </div>

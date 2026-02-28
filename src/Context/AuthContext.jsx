@@ -7,10 +7,10 @@ export default function AuthContextprovider({ children }) {
 
 
   const [userData, setUser] = useState(null);
-  const [isLogin, setLogin] = useState(localStorage.getItem("token"));
+  const [isLogin, setLogin] = useState(!!localStorage.getItem("token"));
 
   async function getUserData(token) {
-    try {
+    try { 
       const { data } = await axios.get(
         `https://route-posts.routemisr.com/users/profile-data`,
         {
