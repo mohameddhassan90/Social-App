@@ -225,7 +225,7 @@ export default function PostCard({ post, isHome }) {
         </div>
         {/* if Shared Post  */}
         {post?.isShare && (
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-hidden border border-slate-200 bg-white shadow-sm">
             <div className="mx-4 my-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               <div className="p-3">
                 <div className="mb-2 flex items-center gap-2">
@@ -256,7 +256,7 @@ export default function PostCard({ post, isHome }) {
                 {post?.sharedPost?.image && (
                   <img
                     alt="Shared Post"
-                    className="max-h-[600px] w-full object-cover"
+                    className="max-h-150 w-full object-cover"
                     src={post?.sharedPost?.image}
                   />
                 )}

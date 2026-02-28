@@ -23,6 +23,7 @@ export default function Navbar() {
       },
     );
   }
+  
 
   function logOut() {
     setLogin(null);
@@ -37,7 +38,7 @@ export default function Navbar() {
             <img
               alt="Route Posts"
               className="h-9 w-9 rounded-xl object-cover"
-              src="./src/images/route.png"
+              src="https://i.ibb.co/zhDsG8YS/route.jpg"
             />
             <p className="hidden text-xl font-extrabold text-slate-900 sm:block">
               Route Posts
