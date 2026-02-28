@@ -36,7 +36,6 @@ export default function Register() {
         `https://route-posts.routemisr.com/users/signup`,
         formData,
       );
-      console.log(data?.data?.token);
       toast.success("Success");
       navigate("/login");
     } catch (error) {

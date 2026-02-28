@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { PropagateLoader } from "react-spinners";
 
 export default function DeleteModal({ post }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen,onClose, onOpenChange } = useDisclosure();
   const targetRef = React.useRef(null);
   const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
   const query = useQueryClient();
@@ -24,10 +24,14 @@ export default function DeleteModal({ post }) {
     mutationFn: deletePost,
     onSuccess: (data) => {
       toast.success(data?.data?.message);
-      query.invalidateQueries({ queryKey: ["posts"] });
-      query.invalidateQueries({ queryKey: [`userPosts`] });
-      query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
-      query.invalidateQueries({ queryKey: ["comment", post?._id] });
+      query.invalidateQueries({ queryKey: ["feed"] });
+        query.invalidateQueries({ queryKey: ["community"] });
+        query.invalidateQueries({ queryKey: [`userPosts`] });
+        query.invalidateQueries({ queryKey: [`notifictions`] });
+        query.invalidateQueries({ queryKey: ["comment", post?._id] });
+        query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
+        query.invalidateQueries({ queryKey: ["suggested"] });
+        query.invalidateQueries({ queryKey: ["countNotifictions"] });
       onClose()
     },
   });
@@ -107,3 +111,5 @@ export default function DeleteModal({ post }) {
     </>
   );
 }
+
+                

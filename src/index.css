@@ -1,3 +1,5 @@
+
+
 @import "tailwindcss";
 @plugin './hero.js';
 @source '../node_modules/@heroui/theme/dist/**/*.{js,jsx}';
@@ -30,4 +32,9 @@
   .container{
     @apply mx-auto px-30
   }
+}
+
+              
+.active{
+  color: #1f6fe5;
 }

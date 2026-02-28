@@ -1,24 +1,16 @@
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
-} from "@heroui/react";
-import { changeDate } from "./utilties/FormatDate";
+import { changeTime } from "./utilties/FormatDate";
 import Comment from "./Comment";
 import { NavLink } from "react-router-dom";
 import AddComment from "./AddComment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { authContext } from "./Context/AuthContext";
 import UpdateModal from "./UpdateModal";
 import DeleteModal from "./DeleteModal";
 import Loading from "./Loading";
 import { PropagateLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 export default function PostCard({ post, isHome }) {
   const query = useQueryClient();
@@ -28,12 +20,10 @@ export default function PostCard({ post, isHome }) {
     setOpen(!isOpen);
   }
 
-  const { data,isLoading,isError } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["comment", post?._id], //id bta3 al post
     queryFn: getPostComment,
   });
-  console.log(`post`, post);
-  console.log(`comments`, data);
 
   const firstComment = data?.data?.data?.comments[0];
 
@@ -55,13 +45,16 @@ export default function PostCard({ post, isHome }) {
   } = useMutation({
     mutationFn: handleLike,
     onSuccess: () => {
-      query.invalidateQueries({ queryKey: ["posts"] });
+      query.invalidateQueries({ queryKey: ["feed"] });
+      query.invalidateQueries({ queryKey: ["community"] });
       query.invalidateQueries({ queryKey: [`userPosts`] });
-      query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
       query.invalidateQueries({ queryKey: ["comment", post?._id] });
+      query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
   });
-  console.log(`dataLike`, dataLike);
 
   function handleLike() {
     return axios.put(
@@ -73,6 +66,52 @@ export default function PostCard({ post, isHome }) {
         },
       },
     );
+  }
+
+  const [isShare, setShare] = useState(false);
+  const ShareContent = useRef(null);
+  function toggleShare() {
+    setShare(!isShare);
+  }
+
+  const {
+    data: shareData,
+    isPending: sharePending,
+    mutate: shareResponse,
+  } = useMutation({
+    mutationFn: sharePost,
+    onSuccess: () => {
+      toast.success(`Post Shared Successfully`)
+      query.invalidateQueries({ queryKey: ["feed"] });
+      query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["comment", post?._id] });
+      query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message);
+    },
+    onSettled: () => {
+      setShare(false);
+    },
+  });
+  function sharePost(obj) {
+    return axios.post(
+      `https://route-posts.routemisr.com/posts/${post?._id}/share`,
+      obj,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(`token`)}`,
+        },
+      },
+    );
+  }
+  function handleShare() {
+    const obj = { body: ShareContent?.current?.value || `` };
+    shareResponse(obj);
   }
 
   return (
@@ -102,7 +141,7 @@ export default function PostCard({ post, isHome }) {
                   type="button"
                   className="rounded px-0.5 py-0.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 hover:underline"
                 >
-                  {changeDate(post?.createdAt)}
+                  {changeTime(post?.createdAt)}
                 </button>
               </div>
             </div>
@@ -151,7 +190,11 @@ export default function PostCard({ post, isHome }) {
                   </button>
                   {userData?.id === post?.user?._id && (
                     <>
-                      <UpdateModal post={post} postId={post?._id}></UpdateModal>
+                      <UpdateModal
+                        post={post}
+                        setOpen={setOpen}
+                        postId={post?._id}
+                      ></UpdateModal>
                       <DeleteModal post={post}></DeleteModal>
                     </>
                   )}
@@ -180,6 +223,62 @@ export default function PostCard({ post, isHome }) {
             <span className="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/10" />
           </button>
         </div>
+        {/* if Shared Post  */}
+        {post?.isShare && (
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="mx-4 my-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              <div className="p-3">
+                <div className="mb-2 flex items-center gap-2">
+                  <img
+                    alt={post?.sharedPost?.user?.name}
+                    className="h-9 w-9 rounded-full object-cover"
+                    src={post?.sharedPost?.user?.photo}
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-slate-900">
+                      {post?.sharedPost?.user?.name}
+                    </p>
+                    <p className="truncate text-xs text-slate-500">
+                      @{post?.sharedPost?.user?.username}
+                    </p>
+                  </div>
+                  <span className="ml-auto text-xs font-semibold text-[#1877f2]">
+                    Original Post
+                  </span>
+                </div>
+                <p className="truncate text-black ml-10">
+                  {post?.sharedPost?.body
+                    ? post?.sharedPost?.body
+                    : `Shared post content unavailable`}
+                </p>
+              </div>
+              <div className="border-t border-slate-200">
+                {post?.sharedPost?.image && (
+                  <img
+                    alt="Shared Post"
+                    className="max-h-[600px] w-full object-cover"
+                    src={post?.sharedPost?.image}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm text-slate-600">
+              <span>
+                <i class="fa-regular fa-thumbs-up"></i>{" "}
+                {post?.sharedPost?.likesCount}
+              </span>
+              <span>
+                <i class="fa-regular fa-comment"></i>{" "}
+                {post?.sharedPost?.commentsCount}
+              </span>
+              <span>
+                <i class="fa-solid fa-share-nodes"></i>{" "}
+                {post?.sharedPost?.sharesCount}
+              </span>
+            </div>
+          </div>
+        )}
+        {/* ............... */};
         <div className="px-4 pb-2 pt-3 text-sm text-slate-500">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -306,7 +405,10 @@ export default function PostCard({ post, isHome }) {
             </svg>
             <span>Comment</span>
           </button>
-          <button className="cursor-pointer flex items-center justify-center gap-1.5 rounded-md p-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:gap-2 sm:text-sm text-slate-600 hover:bg-slate-100">
+          <button
+            onClick={toggleShare}
+            className="cursor-pointer flex items-center justify-center gap-1.5 rounded-md p-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:gap-2 sm:text-sm text-slate-600 hover:bg-slate-100"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width={18}
@@ -329,14 +431,125 @@ export default function PostCard({ post, isHome }) {
             <span>Share</span>
           </button>
         </div>
+        {isShare && (
+          <div
+            onClick={() => setShare(false)}
+            className="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/65 p-4"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-140 rounded-2xl border border-slate-200 bg-white shadow-2xl"
+            >
+              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                <h4 className="text-base font-extrabold text-slate-900">
+                  Share post
+                </h4>
+                <button
+                  onClick={() => {
+                    setShare(false);
+                  }}
+                  type="button"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-60"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={16}
+                    height={16}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-x"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="space-y-3 p-4">
+                <textarea
+                  placeholder="Say something about this..."
+                  rows={3}
+                  maxLength={500}
+                  ref={ShareContent}
+                  className="w-full resize-none rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#1877f2] focus:ring-2 focus:ring-[#1877f2]/20"
+                  defaultValue={""}
+                />
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <div className="flex items-center gap-2">
+                    <img
+                      alt={post?.user?.name}
+                      className="h-8 w-8 rounded-full object-cover"
+                      src={post?.user?.photo}
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-slate-900">
+                        {post?.user?.name}
+                      </p>
+                      <p className="truncate text-xs font-semibold text-slate-500">
+                        @{post?.user?.username}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-slate-800">
+                    {post?.body}
+                  </p>
+                  {post?.image && (
+                    <img
+                      alt="post preview"
+                      className="mt-2 max-h-55 w-full rounded-lg object-cover"
+                      src={post?.image}
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3">
+                <button
+                  onClick={() => {
+                    setShare(false);
+                  }}
+                  type="button"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleShare}
+                  type="button"
+                  className="inline-flex items-center rounded-lg bg-[#1877f2] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#166fe5] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {sharePending ? (
+                    <i className="fa-solid fa-spin fa-spinner text-white"></i>
+                  ) : (
+                    `Share now`
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="mx-4 mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
           <AddComment postId={post?._id}></AddComment>
 
-          {isLoading?<PropagateLoader className="h-15 text-center content-center w-full"></PropagateLoader>:isHome && firstComment && <Comment comment={firstComment}></Comment>}
+          {isLoading ? (
+            <PropagateLoader className="h-15 text-center content-center w-full"></PropagateLoader>
+          ) : (
+            isHome &&
+            firstComment && (
+              <Comment postId={post?._id} comment={firstComment}></Comment>
+            )
+          )}
 
           {!isHome &&
             data?.data?.data?.comments.map((comment) => (
-              <Comment key={comment._id} comment={comment}></Comment>
+              <Comment
+                postId={post?._id}
+                key={comment._id}
+                comment={comment}
+              ></Comment>
             ))}
         </div>
       </article>

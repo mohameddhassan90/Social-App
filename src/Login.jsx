@@ -33,7 +33,6 @@ export default function Login() {
         `https://route-posts.routemisr.com/users/signin`,
         formData,
       );
-      console.log(data);
 
       const token = data?.data?.token;
       localStorage.setItem("token", token);

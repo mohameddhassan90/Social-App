@@ -6,8 +6,9 @@ import React, { useContext } from "react";
 import { toast } from "react-toastify";
 import { authContext } from "./Context/AuthContext";
 
-export default function AddComment({ postId }) {  //id bta3 al post
-  const { userData } = useContext(authContext);    //data bta3ty ana 
+export default function AddComment({ postId }) {
+  //id bta3 al post
+  const { userData } = useContext(authContext); //data bta3ty ana
   const query = useQueryClient();
 
   const {
@@ -19,10 +20,14 @@ export default function AddComment({ postId }) {  //id bta3 al post
     mutationFn: addComment,
     onSuccess: (data) => {
       toast.success(data?.data?.data?.message);
-      query.invalidateQueries({queryKey: ["posts"]});
-      query.invalidateQueries({queryKey: [`userPosts`]});
-      query.invalidateQueries({queryKey: ["singlepost", postId]});
-      query.invalidateQueries({queryKey: ["comment", postId]});
+      query.invalidateQueries({ queryKey: ["feed"] });
+        query.invalidateQueries({ queryKey: ["community"] });
+        query.invalidateQueries({ queryKey: [`userPosts`] });
+        query.invalidateQueries({ queryKey: [`notifictions`] });
+        query.invalidateQueries({ queryKey: ["comment", postId] });
+        query.invalidateQueries({ queryKey: ["singlepost", postId] });
+        query.invalidateQueries({ queryKey: ["suggested"] });
+        query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);
@@ -31,8 +36,6 @@ export default function AddComment({ postId }) {  //id bta3 al post
       reset();
     },
   });
-  console.log(`addcomment data`,data);
-  
 
   function addComment(obj) {
     return axios.post(
@@ -59,7 +62,7 @@ export default function AddComment({ postId }) {  //id bta3 al post
     if (data.image[0]) formData.append("image", data.image[0]);
     addCommentMutate(formData);
   }
-    if (isError) return <h1>Some Error</h1>;
+  if (isError) return <h1>Some Error</h1>;
 
   return (
     <>
@@ -110,26 +113,29 @@ export default function AddComment({ postId }) {  //id bta3 al post
                 </label>
               </div>
               <button
-              type="submit"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#1877f2] text-white shadow-sm transition hover:bg-[#166fe5] disabled:cursor-not-allowed disabled:bg-[#9ec5ff] disabled:opacity-100"
-                
+                type="submit"
+                className="cursor-pointer inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#1877f2] text-white shadow-sm transition hover:bg-[#166fe5] disabled:cursor-not-allowed disabled:bg-[#9ec5ff] disabled:opacity-100"
               >
-                {isPending?<i className="fa-solid fa-spin fa-spinner text-white"></i>:<svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-send-horizontal"
-                  aria-hidden="true"
-                >
-                  <path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"></path>
-                  <path d="M6 12h16"></path>
-                </svg>}
+                {isPending ? (
+                  <i className="fa-solid fa-spin fa-spinner text-white"></i>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-send-horizontal"
+                    aria-hidden="true"
+                  >
+                    <path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"></path>
+                    <path d="M6 12h16"></path>
+                  </svg>
+                )}
               </button>
             </div>
           </div>

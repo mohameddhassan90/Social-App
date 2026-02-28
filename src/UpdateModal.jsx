@@ -16,6 +16,7 @@ import { authContext } from "./Context/AuthContext";
 import { Icons, toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import Loading from "./Loading";
 
 export const MailIcon = (props) => {
   return (
@@ -61,27 +62,32 @@ export const LockIcon = (props) => {
   );
 };
 
-export default function UpdateModal({ postId, post }) {
+export default function UpdateModal({ postId, post, setOpen }) {
   const query = useQueryClient();
   const { userData } = useContext(authContext);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
   const contentInput = useRef(null);
   const imageInput = useRef(null);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  const { data, mutate } = useMutation({
+  const { data, mutate, isPending } = useMutation({
     mutationFn: updatePost,
     onSuccess: (data) => {
       toast.success(data?.data?.message);
-      query.invalidateQueries({ queryKey: ["posts"] });
-      query.invalidateQueries({ queryKey: [`userPosts`] });
-      query.invalidateQueries({ queryKey: ["singlepost", postId] });
-      query.invalidateQueries({ queryKey: ["comment", postId] });
+      query.invalidateQueries({ queryKey: ["feed"] });
+        query.invalidateQueries({ queryKey: ["community"] });
+        query.invalidateQueries({ queryKey: [`userPosts`] });
+        query.invalidateQueries({ queryKey: [`notifictions`] });
+        query.invalidateQueries({ queryKey: ["comment", postId] });
+        query.invalidateQueries({ queryKey: ["singlepost", postId] });
+        query.invalidateQueries({ queryKey: ["suggested"] });
+        query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      onClose();
+      setOpen(false);
     },
   });
-  console.log(`updated`, data);
 
   function updatePost(newObj) {
     return axios.put(
@@ -136,12 +142,14 @@ export default function UpdateModal({ postId, post }) {
         Edit post
       </button>
       <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="text-center text-amber-500 font-bold flex flex-col gap-1">
-                Update Post
-              </ModalHeader>
+        <ModalContent className="max-h-120">
+          <>
+            <ModalHeader className="text-center text-amber-500 font-bold flex flex-col gap-1">
+              Update Post
+            </ModalHeader>
+            {isPending ? (
+              <Loading></Loading>
+            ) : (
               <ModalBody>
                 <textarea
                   defaultValue={post?.body}
@@ -178,30 +186,30 @@ export default function UpdateModal({ postId, post }) {
                     type="file"
                   />
                 </label>
-                {post?.image || imagePreview ? (
+
+                {(imagePreview || post?.image) && (
                   <img
-                    src={post?.image || imagePreview}
+                    src={imagePreview ? imagePreview : post?.image}
                     alt=""
                     className="w-full h-40 object-cover rounded my-2"
                   />
-                ) : (
-                  ``
                 )}
               </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
-                  Close
-                </Button>
-                <Button
-                  onClick={handleSubmit}
-                  color="primary"
-                  onPress={onClose}
-                >
-                  Confirm
-                </Button>
-              </ModalFooter>
-            </>
-          )}
+            )}
+            <ModalFooter>
+              <Button color="danger" variant="flat" onPress={onClose}>
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  handleSubmit();
+                }}
+                color="primary"
+              >
+                Confirm
+              </Button>
+            </ModalFooter>
+          </>
         </ModalContent>
       </Modal>
     </>

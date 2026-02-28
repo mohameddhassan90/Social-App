@@ -1,24 +1,77 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { authContext } from "./Context/AuthContext";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import PostCard from "./PostCard";
 import Loading from "./Loading";
-import { useParams } from "react-router-dom";
 import { changeDate } from "./utilties/FormatDate";
+import { object } from "zod";
+import { da } from "zod/v4/locales";
+import { toast } from "react-toastify";
 
 export default function Profile() {
-  const { userData } = useContext(authContext);
+  const query = useQueryClient();
+  const { userData, getUserData } = useContext(authContext);
+  const imageProfile = useRef(null);
+  const [image, setImage] = useState(null);
+  const [isOpen, setOpen] = useState(false);
 
-  const { data,isError, isLoading } = useQuery({
+  function handleImg(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    setImage(url);
+    setOpen(true);
+  }
+
+  const {
+    data: dataPhoto,
+    isPending,
+    mutate,
+  } = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: (data) => {
+      toast.success(data?.data?.message);
+      query.invalidateQueries({ queryKey: ["feed"] });
+        query.invalidateQueries({ queryKey: ["community"] });
+        query.invalidateQueries({ queryKey: [`userPosts`] });
+        query.invalidateQueries({ queryKey: [`notifictions`] });
+        query.invalidateQueries({ queryKey: ["suggested"] });
+        query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      getUserData(localStorage.getItem(`token`));
+    },
+    onSettled: () => {
+      setOpen(false);
+    },
+  });
+
+  function updateProfile(object) {
+    return axios.put(
+      `https://route-posts.routemisr.com/users/upload-photo`,
+      object,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(`token`)}`,
+        },
+      },
+    );
+  }
+
+  function handleSubmit() {
+    const formData = new FormData();
+
+    if (imageProfile.current.files[0])
+      formData.append(`photo`, imageProfile.current.files[0]);
+    mutate(formData);
+  }
+
+  const { data, isError, isLoading } = useQuery({
     queryKey: [`userPosts`],
-    queryFn: handleProfile,
-  }); 
-  console.log(`My porifle data`,data);
-  console.log(`user data for me`,userData);
+    queryFn: getMyPost,
+  });
 
-
-  function handleProfile() {
+  function getMyPost() {
     return axios.get(
       `https://route-posts.routemisr.com/users/${userData?._id}/posts`,
       {
@@ -130,9 +183,11 @@ export default function Profile() {
                               <circle cx={12} cy={13} r={3} />
                             </svg>
                             <input
+                              type="file"
+                              onChange={handleImg}
                               accept="image/*"
                               className="hidden"
-                              type="file"
+                              ref={imageProfile}
                             />
                           </label>
                         </div>
@@ -220,9 +275,8 @@ export default function Profile() {
                           {userData?.email}
                         </p>
                         <p className="flex items-center gap-2">
-                          <i class="fa-solid fa-cake-candles">
-                          </i>
-                            {changeDate(userData.dateOfBirth)}
+                          <i class="fa-solid fa-cake-candles"></i>
+                          {changeDate(userData.dateOfBirth)}
                         </p>
                         <p className="flex items-center gap-2">
                           <i class="fa-solid fa-user"></i>
@@ -322,15 +376,89 @@ export default function Profile() {
                 </span>
               </div>
               <div className="space-y-3">
-
-                {data?.data?.data?.posts.map((post)=><PostCard key={post._id} post={post} isHome></PostCard>)}
-                
+                {data?.data?.data?.posts.map((post) => (
+                  <PostCard key={post._id} post={post} isHome></PostCard>
+                ))}
               </div>
             </section>
+            {isOpen && (
+              <div className="fixed inset-0 z-90 flex items-center justify-center bg-black/70 p-4">
+                <div className="w-full max-w-140 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl sm:p-5">
+                  <div className="mb-3">
+                    <h3 className="text-lg font-extrabold text-slate-900">
+                      Adjust profile photo
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                      Drag to reposition and use zoom for perfect framing.
+                    </p>
+                  </div>
+                  <div className="mx-auto w-full max-w-85 overflow-x-auto pb-1">
+                    <div className="relative h-80 w-[320px] touch-none overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200">
+                      <img
+                        alt="Crop preview"
+                        draggable="false"
+                        className="pointer-events-none absolute left-1/2 top-1/2 select-none"
+                        src={image}
+                        style={{
+                          width: 960,
+                          height: 540,
+                          maxWidth: "none",
+                          maxHeight: "none",
+                          transform:
+                            "translate(calc(-50% + 0px), calc(-50% + 0px)) scale(0.592593)",
+                          transformOrigin: "center center",
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+                      <span>Zoom</span>
+                      <span>1.00x</span>
+                    </div>
+                    <input
+                      min={1}
+                      max={3}
+                      step="0.01"
+                      className="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#1877f2]"
+                      type="range"
+                      defaultValue={1}
+                    />
+                  </div>
+                  <div className="mt-4">
+                    <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-500">
+                      Post privacy
+                    </p>
+                  </div>
+                  <div className="mt-5 flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                      }}
+                      type="button"
+                      className="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
+                      fdprocessedid="i84fqh"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="cursor-pointer inline-flex items-center rounded-lg bg-[#1877f2] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#166fe5] disabled:cursor-not-allowed disabled:opacity-60"
+                      onClick={handleSubmit}
+                    >
+                      {isPending ? (
+                        <i className="fa-solid fa-spin fa-spinner text-white"></i>
+                      ) : (
+                        "Update Photo"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>
-
     </>
   );
 }
