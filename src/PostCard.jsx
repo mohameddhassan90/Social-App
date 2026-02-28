@@ -47,6 +47,8 @@ export default function PostCard({ post, isHome }) {
     onSuccess: () => {
       query.invalidateQueries({ queryKey: ["feed"] });
       query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      query.invalidateQueries({ queryKey: ["notifictions"] });
       query.invalidateQueries({ queryKey: [`userPosts`] });
       query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
     },

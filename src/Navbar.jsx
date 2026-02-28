@@ -32,7 +32,9 @@ export default function Navbar() {
   }
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-200/90 bg-white/95 backdrop-blur">
+      <header
+      onClick={()=>{setOpen(false)}}  
+      className="sticky top-0 z-40 border-b border-slate-200/90 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-2 py-1.5 sm:gap-3 sm:px-3">
           <div className="flex items-center gap-3">
             <img
@@ -127,7 +129,7 @@ export default function Navbar() {
           </nav>
           <div className="relative">
             <button
-              onClick={toggleMenu}
+              onClick={(e) => {e.stopPropagation();toggleMenu()}}
               className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1.5 transition hover:bg-slate-100"
               fdprocessedid="grbww"
             >
