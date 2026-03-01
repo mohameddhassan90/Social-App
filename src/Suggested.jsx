@@ -168,7 +168,7 @@ export default function Suggested() {
           )}
         </div>
       </aside>
-      ;
+      
     </>
   );
 }
