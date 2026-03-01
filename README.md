@@ -1,16 +1,95 @@
-# React + Vite
+# 🚀 Social App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern social media web application built using React and REST APIs.  
+Users can create posts, follow other users, and interact in a dynamic feed.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌍 Live Demo
 
-## React Compiler
+👉 https://social-app-nine-gules.vercel.app
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📂 GitHub Repository
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+👉 https://github.com/mohameddhassan90/Social-App
+
+---
+
+## 🛠 Tech Stack
+
+- React.js
+- Vite
+- React Query
+- Axios
+- Context API
+- Tailwind CSS
+- REST API
+
+---
+
+## ✨ Features
+
+- 🔐 User Authentication (Login / Register)
+- 📝 Create, Edit & Delete Posts
+- 👥 Follow / Unfollow Users
+- 👤 User Profile Page
+- 📱 Fully Responsive Design
+- ⚡ Optimized Data Fetching with React Query
+
+---
+
+## 📸 Screenshots
+
+_Add screenshots here_
+
+Example:
+
+![Home](./screenshots/home.png)
+![Profile](./screenshots/profile.png)
+
+---
+
+## 🖥 Installation & Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/mohameddhassan90/Social-App.git
+```
+
+Go to the project folder:
+
+```bash
+cd Social-App
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+---
+
+## 📌 Future Improvements
+
+- 🌙 Dark Mode
+- 🔄 Infinite Scroll
+- ⚡ Optimistic Updates
+- 🧠 Better Error Handling
+- 🔔 Notifications System
+
+---
+
+## 👨‍💻 Author
+
+Mohamed Hassan  
+Frontend Developer
