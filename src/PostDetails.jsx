@@ -32,7 +32,7 @@ export default function PosttDetails() {
       <div className="min-w-0">
         <div className="mx-auto max-w-3xl space-y-4">
           <button
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+            className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
             onClick={btnBack}
           >
             <svg

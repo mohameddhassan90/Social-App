@@ -32,9 +32,12 @@ export default function Profile() {
     onSuccess: (data) => {
       toast.success(data?.data?.message);
       query.invalidateQueries({ queryKey: ["feed"] });
-        query.invalidateQueries({ queryKey: ["community"] });
-        query.invalidateQueries({ queryKey: [`userPosts`] });
-        getUserData(localStorage.getItem(`token`));
+      query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      getUserData(localStorage.getItem(`token`));
     },
     onSettled: () => {
       setOpen(false);

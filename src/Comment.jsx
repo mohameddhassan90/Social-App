@@ -6,7 +6,6 @@ import axios from "axios";
 import { authContext } from "./Context/AuthContext";
 import { toast } from "react-toastify";
 
-
 export default function Comment({ comment, postId }) {
   const query = useQueryClient();
   const { userData } = useContext(authContext);
@@ -28,13 +27,14 @@ export default function Comment({ comment, postId }) {
     onSuccess: (data) => {
       toast.success(data?.data?.message);
       query.invalidateQueries({ queryKey: ["feed"] });
-        query.invalidateQueries({ queryKey: ["community"] });
-        query.invalidateQueries({ queryKey: [`userPosts`] });
-        query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["comment", postId] });
-        query.invalidateQueries({ queryKey: ["singlepost", postId] });
-        query.invalidateQueries({ queryKey: ["suggested"] });
-        query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["comment", postId] });
+      query.invalidateQueries({ queryKey: ["singlepost", postId] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      
     },
     onSettled: () => {
       setEdit(false);
@@ -323,7 +323,6 @@ export default function Comment({ comment, postId }) {
           </div>
         </div>
       </div>
-      ;
     </>
   );
 }

@@ -6,13 +6,18 @@ import { authContext } from "./Context/AuthContext";
 
 export default function SuggestedCard({ suggest }) {
   console.log(suggest);
-  const{getUserData}=useContext(authContext)
+  const { getUserData } = useContext(authContext);
   const query = useQueryClient();
   const { data, mutate, isPending } = useMutation({
     mutationFn: followUser,
     onSuccess: (data) => {
       toast.success(data.data.message);
+      query.invalidateQueries({ queryKey: ["feed"] });
+      query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
       query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
       getUserData(localStorage.getItem(`token`));
     },
   });

@@ -5,14 +5,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 export default function NotifictionsCard({ notifiction }) {
-    
   const navigate = useNavigate();
   const query = useQueryClient();
   const { data, mutate, isPending, isSuccess } = useMutation({
     mutationFn: markAsRead,
     onSuccess: () => {
-        query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      query.invalidateQueries({ queryKey: ["feed"] });
+      query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
   });
   function markAsRead() {

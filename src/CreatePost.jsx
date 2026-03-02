@@ -34,6 +34,9 @@ export default function CreatePost() {
       query.invalidateQueries({ queryKey: ["feed"] });
       query.invalidateQueries({ queryKey: ["community"] });
       query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);

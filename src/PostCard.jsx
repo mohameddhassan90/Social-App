@@ -1,6 +1,6 @@
 import { changeTime } from "./utilties/FormatDate";
 import Comment from "./Comment";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import AddComment from "./AddComment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -47,10 +47,12 @@ export default function PostCard({ post, isHome }) {
     onSuccess: () => {
       query.invalidateQueries({ queryKey: ["feed"] });
       query.invalidateQueries({ queryKey: ["community"] });
-      query.invalidateQueries({ queryKey: ["countNotifictions"] });
-      query.invalidateQueries({ queryKey: ["notifictions"] });
       query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["comment", post?._id] });
       query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
   });
 
@@ -79,11 +81,15 @@ export default function PostCard({ post, isHome }) {
   } = useMutation({
     mutationFn: sharePost,
     onSuccess: () => {
-      toast.success(`Post Shared Successfully`)
+      toast.success(`Post Shared Successfully`);
       query.invalidateQueries({ queryKey: ["feed"] });
       query.invalidateQueries({ queryKey: ["community"] });
       query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["comment", post?._id] });
       query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);
@@ -104,7 +110,7 @@ export default function PostCard({ post, isHome }) {
     );
   }
   function handleShare() {
-    const obj = { body: ShareContent?.current?.value || `` };
+    const obj = { body: ShareContent?.current?.value || `  ` };
     shareResponse(obj);
   }
 
@@ -236,9 +242,13 @@ export default function PostCard({ post, isHome }) {
                       @{post?.sharedPost?.user?.username}
                     </p>
                   </div>
-                  <span className="ml-auto text-xs font-semibold text-[#1877f2]">
-                    Original Post
-                  </span>
+                  
+                  <Link
+                to={`/postdetails/${post?.sharedPost?._id}`}
+                className="ml-auto rounded-md px-2 py-1 text-xs font-bold text-[#1877f2] hover:bg-[#e7f3ff]"
+              >
+                Original Post
+              </Link>
                 </div>
                 <p className="truncate text-black ml-10">
                   {post?.sharedPost?.body
@@ -323,13 +333,15 @@ export default function PostCard({ post, isHome }) {
                 </svg>
                 {post?.sharesCount} shares
               </span>
-              <span>{post?.commentsCount} comments</span>
-              <NavLink
+              <Link to={`/postdetails/${post?._id}`}>
+                {post?.commentsCount} comments
+              </Link>
+              <Link
                 to={`/postdetails/${post?._id}`}
                 className="rounded-md px-2 py-1 text-xs font-bold text-[#1877f2] hover:bg-[#e7f3ff]"
               >
                 View details
-              </NavLink>
+              </Link>
             </div>
           </div>
         </div>
@@ -397,7 +409,10 @@ export default function PostCard({ post, isHome }) {
             >
               <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
             </svg>
-            <span>Comment</span>
+            <Link to={`/postdetails/${post?._id}`}>
+            
+              {post?.commentsCount >= 1 && post?.commentsCount} comments
+            </Link>
           </button>
           <button
             onClick={toggleShare}

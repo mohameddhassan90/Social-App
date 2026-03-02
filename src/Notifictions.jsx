@@ -27,8 +27,12 @@ export default function Notifictions() {
   } = useMutation({
     mutationFn: markAll,
     onSuccess: () => {
-        query.invalidateQueries({ queryKey: [`notifictions`] });
-        query.invalidateQueries({ queryKey: ["countNotifictions"] });
+      query.invalidateQueries({ queryKey: ["feed"] });
+      query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
     },
   });
   function markAll() {
@@ -79,23 +83,29 @@ export default function Notifictions() {
                 className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 fdprocessedid="jzzz7"
               >
-                {!isPending&&<svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={15}
-                  height={15}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-check-check"
-                  aria-hidden="true"
-                >
-                  <path d="M18 6 7 17l-5-5" />
-                  <path d="m22 10-7.5 7.5L13 16" />
-                </svg>}
-                {isPending?<i className="fa-solid fa-spin fa-spinner text-blue-500"></i>:`Mark all as read`}
+                {!isPending && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={15}
+                    height={15}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-check-check"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 6 7 17l-5-5" />
+                    <path d="m22 10-7.5 7.5L13 16" />
+                  </svg>
+                )}
+                {isPending ? (
+                  <i className="fa-solid fa-spin fa-spinner text-blue-500"></i>
+                ) : (
+                  `Mark all as read`
+                )}
               </button>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:items-center">

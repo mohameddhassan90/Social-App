@@ -89,8 +89,6 @@ export default function Suggested() {
                 <input
                   placeholder="Search friends..."
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 outline-none focus:border-[#1877f2] focus:bg-white"
-                  defaultValue
-                  fdprocessedid="ng02bi"
                 />
               </label>
             </div>

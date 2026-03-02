@@ -15,20 +15,25 @@ import { toast } from "react-toastify";
 import { PropagateLoader } from "react-spinners";
 
 export default function DeleteModal({ post }) {
-  const { isOpen, onOpen,onClose, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const targetRef = React.useRef(null);
   const { moveProps } = useDraggable({ targetRef, isDisabled: !isOpen });
   const query = useQueryClient();
 
-  const { data,isPending, mutate } = useMutation({
+  const { data, isPending, mutate } = useMutation({
     mutationFn: deletePost,
     onSuccess: (data) => {
       toast.success(data?.data?.message);
       query.invalidateQueries({ queryKey: ["feed"] });
-        query.invalidateQueries({ queryKey: ["community"] });
-        query.invalidateQueries({ queryKey: [`userPosts`] });
-        query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
-      onClose()
+      query.invalidateQueries({ queryKey: ["community"] });
+      query.invalidateQueries({ queryKey: [`userPosts`] });
+      query.invalidateQueries({ queryKey: [`notifictions`] });
+      query.invalidateQueries({ queryKey: ["comment", post?._id] });
+      query.invalidateQueries({ queryKey: ["singlepost", post?._id] });
+      query.invalidateQueries({ queryKey: ["suggested"] });
+      query.invalidateQueries({ queryKey: ["countNotifictions"] });
+
+      onClose();
     },
   });
 
@@ -84,19 +89,20 @@ export default function DeleteModal({ post }) {
               >
                 Delete Post
               </ModalHeader>
-              {isPending?<PropagateLoader className="h-15 flex justify-center items-center"></PropagateLoader>:<ModalBody>
-                <p className="text-center">
-                  Are You Sure ?... <br /> You Want To Delete This Post ?...
-                </p>
-              </ModalBody>}
+              {isPending ? (
+                <PropagateLoader className="h-15 flex justify-center items-center"></PropagateLoader>
+              ) : (
+                <ModalBody>
+                  <p className="text-center">
+                    Are You Sure ?... <br /> You Want To Delete This Post ?...
+                  </p>
+                </ModalBody>
+              )}
               <ModalFooter className="mx-auto">
                 <Button color="danger" onPress={onClose}>
                   Cancel
                 </Button>
-                <Button
-                  onClick={handleDelete}
-                  color="primary"
-                >
+                <Button onClick={handleDelete} color="primary">
                   Confirm
                 </Button>
               </ModalFooter>
@@ -107,5 +113,3 @@ export default function DeleteModal({ post }) {
     </>
   );
 }
-
-                
