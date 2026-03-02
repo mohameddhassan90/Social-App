@@ -272,7 +272,7 @@ export default function PostCard({ post, isHome }) {
             </div>
           </div>
         )}
-        {/* ............... */};
+        {/* ............... */}
         <div className="px-4 pb-2 pt-3 text-sm text-slate-500">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
